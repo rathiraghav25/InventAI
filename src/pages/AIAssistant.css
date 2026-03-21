@@ -1,0 +1,212 @@
+.ai-page {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  height: 100%;
+}
+
+.ai-header-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.ai-star-icon {
+  color: var(--color-accent);
+}
+
+.ai-chat-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--space-6);
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 1024px) {
+  .ai-chat-layout {
+    grid-template-columns: 1fr;
+  }
+  .hidden-on-mobile {
+    display: none;
+  }
+}
+
+.ai-chat-main {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  height: calc(100vh - 200px);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background-color: var(--color-bg);
+}
+
+.chat-bubble-container {
+  display: flex;
+  gap: var(--space-3);
+  max-width: 80%;
+}
+
+.chat-bubble-container.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-bubble-container.ai {
+  align-self: flex-start;
+}
+
+.chat-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user .chat-avatar {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.ai .chat-avatar {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+  color: var(--color-primary-dark);
+}
+
+.chat-bubble {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-bubble.ai {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-top-left-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+
+.chat-bubble.user {
+  background-color: var(--color-primary-light);
+  color: white;
+  border-top-right-radius: 4px;
+}
+
+.chat-input-area {
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.chat-form {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.chat-form input {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.chat-form input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.chat-form button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-form button:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+  transform: scale(1.05);
+}
+
+.chat-form button:disabled {
+  background-color: var(--color-text-light);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.suggestion-btn {
+  text-align: left;
+  justify-content: flex-start;
+  white-space: normal;
+  height: auto;
+  line-height: 1.4;
+  padding: var(--space-2) var(--space-3);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.suggestion-btn:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.typing-indicator .dots {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  height: 20px;
+}
+
+.typing-indicator span {
+  animation: blink 1.4s infinite both;
+  height: 6px;
+  width: 6px;
+  background-color: var(--color-text-light);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0% { opacity: 0.2; transform: scale(0.8); }
+  20% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0.2; transform: scale(0.8); }
+}
