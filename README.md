@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -71,3 +72,7 @@ export default defineConfig([
   },
 ])
 ```
+=======
+# InventAi-Genisys-hackathon-
+InventAI is a smart business automation and inventory management platform for SMEs with real-time stock tracking, order and billing workflows, PDF invoice generation, analytics, notifications, and AI-powered business assistance.
+>>>>>>> 6c36bd49ed849c9cfb13804987c8d22ae8642445
