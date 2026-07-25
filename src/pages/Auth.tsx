@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PackageOpen } from 'lucide-react';
 import './Auth.css';
+import api from "../api/api";
 
 interface AuthProps {
   onLogin: (email: string) => void;
@@ -26,7 +27,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleAuth = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -34,18 +35,20 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     const usersDB = JSON.parse(localStorage.getItem('inventai_users') || '{}');
 
     if (isLogin) {
-      // Basic fallback since we allow "admin@inventai.com" implicitly in MVP
-      if (email === 'admin@inventai.com' && password === 'password') {
-        onLogin(email);
-        navigate('/dashboard');
-        return;
-      }
+      try {
+        const response = await api.post("/auth/login", {
+          email,
+          password,
+        });
 
-      if (usersDB[email] && usersDB[email].password === password) {
+        localStorage.setItem("token", response.data.access_token);
+
         onLogin(email);
-        navigate('/dashboard');
-      } else {
-        setError('Invalid login credentials or account does not exist.');
+        navigate("/dashboard");
+      } catch (err: any) {
+        setError(
+          err.response?.data?.detail || "Invalid login credentials."
+        );
       }
     } else {
       // Handle Sign Up
