@@ -17,19 +17,14 @@ A modern multi-tenant inventory and billing platform built with React, TypeScrip
 ## 📸 Screenshots
 
 ### Dashboard
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](Screenshots/dashboard.png)
 
-### Inventory Management
-![Inventory](screenshots/inventory.png)
+![Inventory](Screenshots/inventory.png)
 
-### Orders Management
-![Orders](screenshots/orders.png)
+![Orders](Screenshots/orders.png)
 
-### Customers
-![Customers](screenshots/customers.png)
+![Customers](Screenshots/customers.png)
 
-### Business Analytics
-![Analytics](screenshots/analytics.png)
+![Analytics](Screenshots/analytics.png)
 
-### AI Assistant
-![AI Assistant](screenshots/ai-assistant.png)
+![AI Assistant](Screenshots/ai-assistant.png)
