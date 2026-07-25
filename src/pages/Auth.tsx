@@ -50,53 +50,38 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           err.response?.data?.detail || "Invalid login credentials."
         );
       }
-    } else {
-      // Handle Sign Up
+    }
+    
+    else {
       if (regPassword !== regConfirmPassword) {
-        setError('Passwords do not match.');
-        return;
-      }
-      if (usersDB[regEmail]) {
-        setError('An account with this email already exists.');
+        setError("Passwords do not match.");
         return;
       }
 
-      // Create new owner account logic
-      usersDB[regEmail] = {
-        name: regName,
-        email: regEmail,
-        phone: regPhone,
-        password: regPassword, // In a real DB this would be hashed
-        storeName: regStoreName
-      };
+      try {
+        await api.post("/auth/signup", {
+          username: regName,
+          email: regEmail,
+          password: regPassword,
+        });
 
-      localStorage.setItem('inventai_users', JSON.stringify(usersDB));
+        setSuccess("Account created successfully! Please login.");
 
-      // Inject initial store settings for this specific owner boundary
-      const ownerStoreKey = `inventai_${regEmail}_storeDetails`;
-      const ownerProfileKey = `inventai_${regEmail}_adminProfile`;
-      
-      localStorage.setItem(ownerStoreKey, JSON.stringify({
-        name: regStoreName,
-        currency: 'INR',
-        address: '',
-        gst: ''
-      }));
+        setTimeout(() => {
+          setIsLogin(true);
+          setRegName("");
+          setRegEmail("");
+          setRegPhone("");
+          setRegPassword("");
+          setRegConfirmPassword("");
+          setRegStoreName("");
+        }, 1500);
 
-      localStorage.setItem(ownerProfileKey, JSON.stringify({
-        name: regName,
-        email: regEmail,
-        phone: regPhone,
-        role: 'Administrator'
-      }));
-
-      setSuccess('Account created successfully! Logging you in...');
-      
-      // Auto-login after brief delay
-      setTimeout(() => {
-        onLogin(regEmail);
-        navigate('/dashboard');
-      }, 1500);
+      } catch (err: any) {
+        setError(
+          err.response?.data?.detail || "Signup failed."
+        );
+      }
     }
   };
 
@@ -123,7 +108,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
               </div>
               <div className="input-group">
                 <label className="input-label">Password</label>
-                <input type="password" className="input-field" value={password} onChange={e => setPassword(e.target.value)} required />
+                <input type="password" className="input-field" value={password} onChange={e => setPassword(e.target.value)} minLength={6} required />
               </div>
               <button type="submit" className="btn btn-primary btn-block">Sign In</button>
             </>
@@ -147,11 +132,11 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
               </div>
               <div className="input-group">
                 <label className="input-label">Password</label>
-                <input type="password" className="input-field" value={regPassword} onChange={e => setRegPassword(e.target.value)} required />
+                <input type="password" className="input-field" value={regPassword} onChange={e => setRegPassword(e.target.value)} minLength={6} required />
               </div>
               <div className="input-group">
                 <label className="input-label">Confirm Password</label>
-                <input type="password" className="input-field" value={regConfirmPassword} onChange={e => setRegConfirmPassword(e.target.value)} required />
+                <input type="password" className="input-field" value={regConfirmPassword} onChange={e => setRegConfirmPassword(e.target.value)} minLength={6} required />
               </div>
               
               <div style={{ gridColumn: 'span 2', marginTop: '1rem' }}>

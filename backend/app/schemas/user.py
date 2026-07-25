@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr
+from pydantic import Field
 
+password: str = Field(min_length=6)
 
 class UserCreate(BaseModel):
     username: str
