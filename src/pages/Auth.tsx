@@ -13,8 +13,8 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   
   // Login State
-  const [email, setEmail] = useState('admin@inventai.com');
-  const [password, setPassword] = useState('password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   // Signup State
   const [regName, setRegName] = useState('');
