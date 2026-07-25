@@ -5,7 +5,13 @@ from app.api.dependencies import get_db
 from app.schemas.user import UserCreate
 from app.services.auth_service import create_user
 
+from app.schemas.user import UserLogin, Token
+from app.services.auth_service import authenticate_user
+from app.core.security import create_access_token
+
 from fastapi import HTTPException
+
+from app.core.security import get_current_user
 
 from app.services.auth_service import (
     create_user,
@@ -35,4 +41,35 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 
     return {
         "message": "User created successfully"
+    }
+
+
+@router.post("/login", response_model=Token)
+def login(user: UserLogin, db: Session = Depends(get_db)):
+    authenticated_user = authenticate_user(
+        db,
+        user.email,
+        user.password,
+    )
+
+    if not authenticated_user:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password",
+        )
+
+    access_token = create_access_token(
+        data={"sub": authenticated_user.email}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+    }
+
+@router.get("/me")
+def get_me(current_user: str = Depends(get_current_user)):
+    return {
+        "email": current_user,
+        "message": "You are authenticated!"
     }
