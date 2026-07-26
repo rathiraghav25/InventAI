@@ -1,12 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bell, UserCircle, Search, FileText, Package, Users, Menu } from 'lucide-react';
+import { Bell, UserCircle, Search, FileText, Package, Users, Menu, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store/MockAppStore';
 import './Header.css';
 
-export const Header: React.FC<{ toggleSidebar?: () => void }> = ({ toggleSidebar }) => {
+interface HeaderProps {
+  toggleSidebar?: () => void;
+
+  currentUser: {
+    id: number;
+    username: string;
+    email: string;
+  } | null;
+
+  onLogout: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  toggleSidebar,
+  currentUser,
+  onLogout,
+}) => {
   const navigate = useNavigate();
-  const { notifications, products, customers, invoices, adminProfile } = useAppStore();
+  const { notifications, products, customers, invoices } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -99,12 +115,36 @@ export const Header: React.FC<{ toggleSidebar?: () => void }> = ({ toggleSidebar
       <div className="header-actions">
         <div className="notification-bell" onClick={() => navigate('/notifications')}>
           <Bell size={22} className="bell-icon" />
-          {unreadCount > 0 && <span className="badge-count">{unreadCount}</span>}
+          {unreadCount > 0 && (
+            <span className="badge-count">{unreadCount}</span>
+          )}
         </div>
-        <div className="user-profile" onClick={() => navigate('/settings')}>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+        }}
+      >
+        <div
+          className="user-profile"
+          onClick={() => navigate("/settings")}
+        >
           <UserCircle size={28} className="profile-icon" />
-          <span className="user-name">{adminProfile.name.split(' ')[0]}</span>
+          <span className="user-name">
+            {currentUser?.username.split(" ")[0]}
+          </span>
         </div>
+
+        <button
+          className="btn btn-ghost"
+          onClick={onLogout}
+          title="Logout"
+         >
+          <LogOut size={20} />
+        </button>
+      </div>
       </div>
     </header>
   );

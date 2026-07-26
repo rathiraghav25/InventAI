@@ -3,7 +3,15 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Package, ShoppingCart, FileText, Users, Bell, BarChart3, Bot, Settings, LogOut } from 'lucide-react';
 import './Sidebar.css';
 
-export const Sidebar: React.FC<{ isCollapsed?: boolean }> = ({ isCollapsed }) => {
+interface SidebarProps {
+  isCollapsed?: boolean;
+  onLogout: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  isCollapsed,
+  onLogout,
+}) => {
   
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -44,10 +52,10 @@ export const Sidebar: React.FC<{ isCollapsed?: boolean }> = ({ isCollapsed }) =>
           <span className="icon-wrap"><Settings size={20} /></span>
           <span className="link-text">Admin / Settings</span>
         </NavLink>
-        <div className="sidebar-link btn-logout" onClick={() => {
-          localStorage.removeItem('inventai_auth');
-          window.location.href = '/login';
-        }}>
+        <div
+          className="sidebar-link btn-logout"
+          onClick={onLogout}
+        >
           <span className="icon-wrap"><LogOut size={20} /></span>
           <span className="link-text">Log Out</span>
         </div>

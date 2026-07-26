@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './store/MockAppStore';
 import { AppLayout } from './components/layout/AppLayout';
@@ -12,6 +12,8 @@ import { Analytics } from './pages/Analytics';
 import { AIAssistant } from './pages/AIAssistant';
 import { Notifications } from './pages/Notifications';
 import { Settings } from './pages/Settings';
+import api from "./api/api";
+import { getCurrentUser } from "./api/auth";
 
 const ProtectedRoute = ({ children, isAuthenticated }: { children: React.ReactNode, isAuthenticated: boolean }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -21,7 +23,7 @@ const ProtectedRoute = ({ children, isAuthenticated }: { children: React.ReactNo
 function App() {
   // Simple mock authentication state with persistence
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem('inventai_auth') === 'true';
+    return !!localStorage.getItem("token");
   });
   
   const [adminId, setAdminId] = useState<string>(() => {
@@ -29,11 +31,48 @@ function App() {
   });
 
   const login = (email: string) => {
-    localStorage.setItem('inventai_auth', 'true');
-    localStorage.setItem('inventai_admin_id', email);
+    localStorage.setItem("inventai_admin_id", email);
     setAdminId(email);
     setIsAuthenticated(true);
   };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("inventai_admin_id");
+
+    setIsAuthenticated(false);
+    setAdminId("");
+  };
+
+  const [currentUser, setCurrentUser] = useState<{
+    id: number;
+    username: string;
+    email: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+        try {
+          const user = await getCurrentUser();
+
+          setCurrentUser(user);
+          setAdminId(user.id.toString());
+          setIsAuthenticated(true);
+          setCurrentUser(user);
+          console.log(user);
+        } catch (err) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("inventai_admin_id");
+
+            setIsAuthenticated(false);
+            setAdminId("");
+        }
+      };
+
+      if (localStorage.getItem("token")) {
+        loadUser();
+      }
+  }, []);
 
   return (
     <AppProvider adminId={adminId}>
@@ -41,9 +80,7 @@ function App() {
         <Routes>
           <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Auth onLogin={login} />} />
           
-          <Route path="/" element={<ProtectedRoute isAuthenticated={isAuthenticated}><AppLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
+          <Route path="/" element={<ProtectedRoute isAuthenticated={isAuthenticated}><AppLayout currentUser={currentUser} onLogout={logout} /></ProtectedRoute>}>            <Route path="dashboard" element={<Dashboard />} />
             <Route path="inventory" element={<Inventory />} />
             <Route path="orders" element={<Orders />} />
             <Route path="invoices" element={<Invoices />} />

@@ -108,7 +108,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
               </div>
               <div className="input-group">
                 <label className="input-label">Password</label>
-                <input type="password" className="input-field" value={password} onChange={e => setPassword(e.target.value)} minLength={6} required />
+                <input type="password" className="input-field" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />
               </div>
               <button type="submit" className="btn btn-primary btn-block">Sign In</button>
             </>
