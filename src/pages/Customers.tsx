@@ -1,10 +1,26 @@
 import React, { useState } from 'react';
-import { useAppStore } from '../store/MockAppStore';
 import { Mail, Phone, MapPin, Edit2, Trash2, Plus } from 'lucide-react';
-import type { Customer } from '../store/MockAppStore';
+import { useEffect } from "react";
+
+import {
+    getCustomers,
+    createCustomer as createCustomerApi,
+    updateCustomer as updateCustomerApi,
+    deleteCustomer as deleteCustomerApi,
+} from "../api/customer";
+
+interface Customer {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    created_at: string;
+}
 
 export const Customers: React.FC = () => {
-  const { customers, orders, addCustomer, updateCustomer, deleteCustomer } = useAppStore();
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const orders: any[] = [];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newCust, setNewCust] = useState<Partial<Customer>>({ name: '', phone: '', email: '', address: '' });
@@ -23,20 +39,44 @@ export const Customers: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Delete this customer? This will not delete their historical orders.')) {
-      deleteCustomer(id);
-    }
+  const handleDelete = async (id: string) => {
+      if (window.confirm("Delete this customer?")) {
+          try {
+              await deleteCustomerApi(id);
+              await fetchCustomers();
+          } catch (err) {
+              console.error(err);
+          }
+      }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingId) {
-      updateCustomer(editingId, newCust);
-    } else {
-      addCustomer(newCust as Omit<Customer, 'id'>);
-    }
-    closeModal();
+  const fetchCustomers = async () => {
+      try {
+          const res = await getCustomers();
+          setCustomers(res.data);
+      } catch (err) {
+          console.error(err);
+      }
+  };
+  useEffect(() => {
+      fetchCustomers();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      try {
+          if (editingId) {
+              await updateCustomerApi(editingId, newCust);
+          } else {
+              await createCustomerApi(newCust);
+          }
+
+          await fetchCustomers();
+          closeModal();
+      } catch (err) {
+          console.error(err);
+      }
   };
 
   const closeModal = () => {

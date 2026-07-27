@@ -4,6 +4,8 @@ import { useAppStore } from '../store/MockAppStore';
 import { MetricCard } from '../components/MetricCard';
 import { IndianRupee, AlertTriangle, CheckCircle, TrendingUp, Sparkles, Plus, FileText, BarChart3, Bell } from 'lucide-react';
 import './Dashboard.css';
+import { useEffect, useState } from "react";
+import { getDashboardStats } from "../api/dashboard";
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -13,6 +15,26 @@ export const Dashboard: React.FC = () => {
   const outOfStockCount = products.filter(p => p.stock_quantity === 0).length;
   const totalStockValue = products.reduce((acc, p) => acc + (p.stock_quantity * p.purchase_price), 0);
   
+  const [stats, setStats] = useState({
+    total_products: 0,
+    low_stock: 0,
+    inventory_value: 0,
+    total_categories: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await getDashboardStats();
+        setStats(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const pendingOrders = orders.filter(o => o.status === 'Pending').length;
   const todaySales = orders.filter(o => o.status === 'Completed').reduce((acc, o) => acc + o.total_amount, 0);
 
@@ -53,17 +75,17 @@ export const Dashboard: React.FC = () => {
           />
         </div>
         <div onClick={() => navigate('/orders')} style={{ cursor: 'pointer' }}>
-          <MetricCard 
-            title="Pending Orders" 
-            value={pendingOrders.toString()} 
-            icon={<CheckCircle size={24} />} 
-            trend="View pending orders"
+          <MetricCard
+              title="Total Products"
+              value={stats.total_products.toString()}
+              icon={<CheckCircle size={24} />}
+              trend={`${stats.total_categories} Categories`}
           />
         </div>
         <div onClick={() => navigate('/inventory')} style={{ cursor: 'pointer' }}>
           <MetricCard 
             title="Stock Value" 
-            value={formatINR(totalStockValue)} 
+            value={formatINR(stats.inventory_value)} 
             icon={<TrendingUp size={24} />} 
             trend="View inventory"
           />
@@ -71,7 +93,7 @@ export const Dashboard: React.FC = () => {
         <div onClick={() => navigate('/inventory')} style={{ cursor: 'pointer' }}>
           <MetricCard 
             title="Low Stock Items" 
-            value={(lowStockCount + outOfStockCount).toString()} 
+            value={stats.low_stock.toString()} 
             icon={<AlertTriangle size={24} color="#f59e0b" />} 
             trend={`${outOfStockCount} out of stock`}
             trendUp={false}

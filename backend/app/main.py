@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from app.api.product import router as product_router
 from app.api.auth import router as auth_router
-
+from app.api.dashboard import router as dashboard_router
 import app.models.base
 import app.models.product
+from app.api.customer import router as customer_router
 
 from app.db.database import create_tables
 
@@ -25,6 +26,8 @@ def startup():
 
 app.include_router(auth_router)
 app.include_router(product_router)
+app.include_router(dashboard_router)
+app.include_router(customer_router)
 
 
 @app.get("/")
