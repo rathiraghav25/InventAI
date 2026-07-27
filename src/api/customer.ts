@@ -4,8 +4,10 @@ const API = axios.create({
     baseURL: "http://127.0.0.1:8000",
 });
 
-export const getCustomers = () =>
-    API.get("/customers/");
+export const getCustomers = async () => {
+    const response = await API.get("/customers/");
+    return response.data;
+};
 
 export const getCustomer = (id: string) =>
     API.get(`/customers/${id}`);

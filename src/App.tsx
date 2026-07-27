@@ -5,7 +5,7 @@ import { AppLayout } from './components/layout/AppLayout';
 import { Auth } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
 import { Inventory } from './pages/Inventory';
-import { Orders } from './pages/Orders';
+import OrdersPage from './pages/Orders';
 import { Invoices } from './pages/Invoices';
 import { Customers } from './pages/Customers';
 import { Analytics } from './pages/Analytics';
@@ -82,7 +82,7 @@ function App() {
           
           <Route path="/" element={<ProtectedRoute isAuthenticated={isAuthenticated}><AppLayout currentUser={currentUser} onLogout={logout} /></ProtectedRoute>}>            <Route path="dashboard" element={<Dashboard />} />
             <Route path="inventory" element={<Inventory />} />
-            <Route path="orders" element={<Orders />} />
+            <Route path="orders" element={<OrdersPage  />} />
             <Route path="invoices" element={<Invoices />} />
             <Route path="customers" element={<Customers />} />
             <Route path="notifications" element={<Notifications />} />

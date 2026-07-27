@@ -4,11 +4,13 @@ from app.api.auth import router as auth_router
 from app.api.dashboard import router as dashboard_router
 import app.models.base
 import app.models.product
+import app.models.order
 from app.api.customer import router as customer_router
 
 from app.db.database import create_tables
 
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.order import router as order_router
 
 app = FastAPI(title="InventAI API")
 
@@ -28,6 +30,7 @@ app.include_router(auth_router)
 app.include_router(product_router)
 app.include_router(dashboard_router)
 app.include_router(customer_router)
+app.include_router(order_router)
 
 
 @app.get("/")
