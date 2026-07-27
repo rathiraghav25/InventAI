@@ -1,16 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
-import { useAppStore } from '../store/MockAppStore';
-import type { Product } from '../store/MockAppStore';
+import {
+    getProducts,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+} from "../api/product";
 
+interface Product {
+    id: string;
+    name: string;
+    sku: string;
+    category: string;
+    description: string;
+    purchase_price: number;
+    selling_price: number;
+    stock_quantity: number;
+    reorder_threshold: number;
+    created_at: string;
+}
 export const Inventory: React.FC = () => {
-  const { products, addProduct, updateProduct, deleteProduct } = useAppStore();
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [newProduct, setNewProduct] = useState<Partial<Product>>({
     name: '', sku: '', category: '', description: '', purchase_price: 0, selling_price: 0, stock_quantity: 0, reorder_threshold: 5
   });
+
+  const fetchProducts = async () => {
+      try {
+          const response = await getProducts();
+          setProducts(response.data);
+      } catch (error) {
+          console.error(error);
+      }
+  };
+  useEffect(() => {
+      fetchProducts();
+  }, []);
 
   const filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -20,20 +48,37 @@ export const Inventory: React.FC = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-      deleteProduct(id);
-    }
+  const handleDelete = async (id: string) => {
+      if (
+          window.confirm(
+              "Are you sure you want to delete this product?"
+          )
+      ) {
+          try {
+              await deleteProduct(id);
+              await fetchProducts();
+          } catch (error) {
+              console.error(error);
+          }
+      }
   };
 
-  const handleAdd = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProductId) {
-      updateProduct(editingProductId, newProduct);
-    } else {
-      addProduct(newProduct as Omit<Product, 'id' | 'created_at'>);
-    }
-    closeModal();
+  const handleAdd = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      try {
+          if (editingProductId) {
+              await updateProduct(editingProductId, newProduct);
+          } else {
+              await createProduct(newProduct);
+          }
+
+          await fetchProducts();
+          closeModal();
+
+      } catch (error) {
+          console.error(error);
+      }
   };
 
   const closeModal = () => {
@@ -108,7 +153,20 @@ export const Inventory: React.FC = () => {
                     <div style={{ fontSize: '0.75rem', color: 'var(--color-text-light)' }}>Min: {product.reorder_threshold}</div>
                   </td>
                   <td>
-                    <span className={`badge ${getStatusBadge(product.status)}`}>{product.status}</span>
+                      {(() => {
+                          const status =
+                              product.stock_quantity === 0
+                                  ? "Out of Stock"
+                                  : product.stock_quantity <= product.reorder_threshold
+                                  ? "Low Stock"
+                                  : "In Stock";
+
+                          return (
+                              <span className={`badge ${getStatusBadge(status)}`}>
+                                  {status}
+                              </span>
+                          );
+                      })()}
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>

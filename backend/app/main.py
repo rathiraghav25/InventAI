@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from app.api.product import router as product_router
+from app.api.auth import router as auth_router
 
 import app.models.base
-from app.api.auth import router as auth_router
+import app.models.product
+
 from app.db.database import create_tables
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,12 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router)
-
-
 @app.on_event("startup")
 def startup():
     create_tables()
+
+app.include_router(auth_router)
+app.include_router(product_router)
 
 
 @app.get("/")
