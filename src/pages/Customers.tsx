@@ -52,8 +52,8 @@ export const Customers: React.FC = () => {
 
   const fetchCustomers = async () => {
       try {
-          const res = await getCustomers();
-          setCustomers(res.data);
+          const customerData = await getCustomers();
+          setCustomers(customerData);
       } catch (err) {
           console.error(err);
       }

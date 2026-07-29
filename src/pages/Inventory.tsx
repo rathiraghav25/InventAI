@@ -30,8 +30,8 @@ export const Inventory: React.FC = () => {
 
   const fetchProducts = async () => {
       try {
-          const response = await getProducts();
-          setProducts(response.data);
+          const productData = await getProducts();
+          setProducts(productData);
       } catch (error) {
           console.error(error);
       }
