@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
+import Sidebar from "./Sidebar";
 import { Header } from './Header';
 
 interface AppLayoutProps {
@@ -18,10 +18,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ currentUser, onLogout }) =
 
   return (
     <div className={`app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        onLogout={onLogout}
-      />
+      <Sidebar />
       <div className="main-content">
         <Header
           toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}

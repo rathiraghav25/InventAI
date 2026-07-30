@@ -1,65 +1,93 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingCart, FileText, Users, Bell, BarChart3, Bot, Settings, LogOut } from 'lucide-react';
-import './Sidebar.css';
+import { NavLink } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Package,
+  Users,
+  ShoppingCart,
+  FileText,
+  BarChart3,
+  Boxes,
+} from "lucide-react";
+import "./Sidebar.css";
 
-interface SidebarProps {
-  isCollapsed?: boolean;
-  onLogout: () => void;
-}
+const menuItems = [
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+    icon: <LayoutDashboard size={20} />,
+  },
+  {
+    name: "Inventory",
+    path: "/inventory",
+    icon: <Package size={20} />,
+  },
+  {
+    name: "Customers",
+    path: "/customers",
+    icon: <Users size={20} />,
+  },
+  {
+    name: "Orders",
+    path: "/orders",
+    icon: <ShoppingCart size={20} />,
+  },
+  {
+    name: "Invoices",
+    path: "/invoices",
+    icon: <FileText size={20} />,
+  },
+  {
+    name: "Analytics",
+    path: "/analytics",
+    icon: <BarChart3 size={20} />,
+  },
+];
 
-export const Sidebar: React.FC<SidebarProps> = ({
-  isCollapsed,
-  onLogout,
-}) => {
-  
-  const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/inventory', label: 'Inventory', icon: Package },
-    { path: '/orders', label: 'Orders', icon: ShoppingCart },
-    { path: '/invoices', label: 'Billing/Invoices', icon: FileText },
-    { path: '/customers', label: 'Customers', icon: Users },
-    { path: '/notifications', label: 'Notifications', icon: Bell },
-    { path: '/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/ai-assistant', label: 'AI Assistant', icon: Bot },
-  ];
-
+export default function Sidebar() {
   return (
-    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      <div className="sidebar-header">
-        <div className="logo-icon">IA</div>
-        <h2>InventAI</h2>
+    <aside className="sidebar">
+      <div className="sidebar-logo">
+
+        <div className="logo-icon">
+          <Boxes size={26} />
+        </div>
+
+        <div>
+          <h2>InventAI</h2>
+          <p>Inventory System</p>
+        </div>
+
       </div>
 
       <nav className="sidebar-nav">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-            >
-              <span className="icon-wrap"><Icon size={20} /></span>
-              <span className="link-text">{item.label}</span>
-            </NavLink>
-          );
-        })}
+
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            end={item.path === "/dashboard"}
+            className={({ isActive }) =>
+              isActive
+                ? "sidebar-link active"
+                : "sidebar-link"
+            }
+          >
+            {item.icon}
+
+            <span>{item.name}</span>
+
+          </NavLink>
+        ))}
+
       </nav>
 
       <div className="sidebar-footer">
-        <NavLink to="/settings" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-          <span className="icon-wrap"><Settings size={20} /></span>
-          <span className="link-text">Admin / Settings</span>
-        </NavLink>
-        <div
-          className="sidebar-link btn-logout"
-          onClick={onLogout}
-        >
-          <span className="icon-wrap"><LogOut size={20} /></span>
-          <span className="link-text">Log Out</span>
-        </div>
+
+        <p>InventAI</p>
+
+        <span>v1.0</span>
+
       </div>
     </aside>
   );
-};
+}

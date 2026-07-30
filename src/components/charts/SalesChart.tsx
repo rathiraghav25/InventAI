@@ -20,7 +20,7 @@ interface SalesChartProps {
 
 const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
   return (
-    <div className="card">
+    <div className="analytics-card">
       <h3 style={{ marginBottom: "1rem" }}>Monthly Sales</h3>
 
       <ResponsiveContainer width="100%" height={300}>

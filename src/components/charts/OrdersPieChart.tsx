@@ -25,7 +25,7 @@ const COLORS = [
 
 const OrdersPieChart: React.FC<OrdersPieChartProps> = ({ data }) => {
   return (
-    <div className="card">
+    <div className="analytics-card">
       <h3 style={{ marginBottom: "1rem" }}>Order Status</h3>
 
       <ResponsiveContainer width="100%" height={300}>

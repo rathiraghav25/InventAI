@@ -239,10 +239,69 @@ a:hover {
   background-color: var(--color-surface);
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
+.table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    font-size:.95rem;
+}
+
+.table-container{
+
+overflow-x:auto;
+
+border-radius:16px;
+
+background:white;
+
+box-shadow:0 8px 20px rgba(0,0,0,.06);
+
+}
+
+.table thead{
+
+background:#f8fafc;
+
+}
+
+.table th{
+
+padding:16px;
+
+font-weight:700;
+
+font-size:.9rem;
+
+color:#475569;
+
+border-bottom:2px solid #e2e8f0;
+
+}
+
+.table td{
+
+padding:16px;
+
+border-bottom:1px solid #f1f5f9;
+
+}
+
+.table tbody tr{
+
+transition:.2s;
+
+}
+
+.table tbody tr:hover{
+
+background:#f8fafc;
+
+}
+
+.table tbody tr:last-child td{
+
+border-bottom:none;
+
 }
 
 .table th {
@@ -271,23 +330,41 @@ a:hover {
   background-color: var(--color-surface-hover);
 }
 
-/* Badges */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.125rem 0.625rem;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
+/* ===========================
+   Status Badges
+=========================== */
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:.75rem;
+    font-weight:600;
+    letter-spacing:.2px;
+    transition:all .2s ease;
 }
 
-.badge-success { background-color: var(--color-success-bg); color: #065f46; }
-.badge-warning { background-color: var(--color-warning-bg); color: #92400e; }
-.badge-danger {
-  background-color: var(--color-danger);
-  color: white;
+.badge-success{
+    background:#dcfce7;
+    color:#15803d;
 }
-.badge-info { background-color: var(--color-info-bg); color: #1e40af; }
+
+.badge-warning{
+    background:#fef3c7;
+    color:#b45309;
+}
+
+.badge-danger{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.badge-info{
+    background:#dbeafe;
+    color:#2563eb;
+}
 
 /* Toast System */
 .toast-container {

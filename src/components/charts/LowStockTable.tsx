@@ -11,7 +11,7 @@ interface LowStockTableProps {
 
 const LowStockTable: React.FC<LowStockTableProps> = ({ data }) => {
   return (
-    <div className="card">
+    <div className="analytics-card">
       <h3 style={{ marginBottom: "1rem" }}>
         Low Stock Products
       </h3>

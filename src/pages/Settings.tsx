@@ -1,188 +1,388 @@
-import React, { useState } from 'react';
-import { UserCircle, Store, Shield, CheckCircle } from 'lucide-react';
-import { useAppStore } from '../store/MockAppStore';
+import React, { useEffect, useState } from "react";
+import {
+  UserCircle,
+  Shield,
+  LogOut,
+  CheckCircle,
+} from "lucide-react";
+import { getCurrentUser } from "../api/auth";
 
-type Tab = 'profile' | 'store' | 'security';
+interface SettingsProps {
+  onLogout?: () => void;
+}
 
-export const Settings: React.FC = () => {
-  const { adminProfile, storeDetails, updateAdminProfile, updateStoreDetails } = useAppStore();
-  
-  const [activeTab, setActiveTab] = useState<Tab>('profile');
-  const [toast, setToast] = useState('');
+interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+}
 
-  // Local state for forms
-  const [profileForm, setProfileForm] = useState(adminProfile);
-  const [storeForm, setStoreForm] = useState(storeDetails);
-  
-  const [passwords, setPasswords] = useState({ current: '', newPass: '', confirm: '' });
+export const Settings: React.FC<SettingsProps> = ({
+  onLogout,
+}) => {
+  const [loading, setLoading] = useState(true);
 
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 3000);
+  const [toast, setToast] = useState("");
+
+  const [profile, setProfile] =
+    useState<UserProfile>({
+      id: 0,
+      username: "",
+      email: "",
+    });
+
+  const [passwords, setPasswords] =
+    useState({
+      current: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const user = await getCurrentUser();
+
+        setProfile({
+          id: user.id,
+          username: user.username,
+          email: user.email,
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  const showToast = (message: string) => {
+    setToast(message);
+
+    setTimeout(() => {
+      setToast("");
+    }, 2500);
   };
 
-  const handleProfileSave = (e: React.FormEvent) => {
+  const handleProfileSave = (
+    e: React.FormEvent
+  ) => {
     e.preventDefault();
-    updateAdminProfile(profileForm);
-    showToast('Profile updated successfully!');
+
+    showToast(
+      "Profile update endpoint will be added soon."
+    );
   };
 
-  const handleStoreSave = (e: React.FormEvent) => {
+  const handlePasswordSave = (
+    e: React.FormEvent
+  ) => {
     e.preventDefault();
-    updateStoreDetails(storeForm);
-    showToast('Store details updated successfully!');
-  };
 
-  const handleSecuritySave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwords.newPass !== passwords.confirm) {
-      alert("Passwords do not match!");
+    if (
+      passwords.newPassword !==
+      passwords.confirmPassword
+    ) {
+      alert("Passwords do not match.");
       return;
     }
-    // Mock save
-    setPasswords({ current: '', newPass: '', confirm: '' });
-    showToast('Security settings updated!');
+
+    showToast(
+      "Password update endpoint will be added soon."
+    );
+
+    setPasswords({
+      current: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
   };
 
-  return (
-    <div className="page-container" style={{ padding: 0 }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "60vh",
+          fontSize: "20px",
+        }}
+      >
+        Loading Settings...
+      </div>
+    );
+  }
+  
+    return (
+    <div className="page-container">
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "2rem",
+        }}
+      >
         <div>
-          <h1 style={{ color: 'var(--color-primary-dark)' }}>Admin Settings</h1>
-          <p style={{ color: 'var(--color-text-light)' }}>Manage your profile, business information, and secure access.</p>
+          <h1>Settings</h1>
+          <p style={{ color: "var(--color-text-light)" }}>
+            Manage your account and security.
+          </p>
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '1fr 3fr', gap: '2rem' }}>
-        {/* Sidebar Menu */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <div 
-            onClick={() => setActiveTab('profile')}
-            className={`card card-hover`} 
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '1.25rem',
-              borderLeft: activeTab === 'profile' ? '4px solid var(--color-primary)' : '4px solid transparent',
-              backgroundColor: activeTab === 'profile' ? 'var(--color-surface-hover)' : 'var(--color-surface)'
-            }}>
-            <UserCircle size={22} color={activeTab === 'profile' ? 'var(--color-primary)' : 'var(--color-text-light)'} />
-            <div style={{ fontWeight: activeTab === 'profile' ? 600 : 400, color: activeTab === 'profile' ? 'var(--color-primary-dark)' : 'var(--color-text)' }}>Profile Informtion</div>
-          </div>
-          
-          <div 
-            onClick={() => setActiveTab('store')}
-            className={`card card-hover`} 
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '1.25rem',
-              borderLeft: activeTab === 'store' ? '4px solid var(--color-primary)' : '4px solid transparent',
-              backgroundColor: activeTab === 'store' ? 'var(--color-surface-hover)' : 'var(--color-surface)'
-            }}>
-            <Store size={22} color={activeTab === 'store' ? 'var(--color-primary)' : 'var(--color-text-light)'} />
-            <div style={{ fontWeight: activeTab === 'store' ? 600 : 400, color: activeTab === 'store' ? 'var(--color-primary-dark)' : 'var(--color-text)' }}>Store Details</div>
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(420px,1fr))",
+          gap: "2rem",
+        }}
+      >
+
+        {/* Profile */}
+
+        <form
+          className="card"
+          onSubmit={handleProfileSave}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+            }}
+          >
+            <UserCircle size={24} />
+            <h2>Profile</h2>
           </div>
 
-          <div 
-            onClick={() => setActiveTab('security')}
-            className={`card card-hover`} 
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '1.25rem',
-              borderLeft: activeTab === 'security' ? '4px solid var(--color-primary)' : '4px solid transparent',
-              backgroundColor: activeTab === 'security' ? 'var(--color-surface-hover)' : 'var(--color-surface)'
-            }}>
-            <Shield size={22} color={activeTab === 'security' ? 'var(--color-primary)' : 'var(--color-text-light)'} />
-            <div style={{ fontWeight: activeTab === 'security' ? 600 : 400, color: activeTab === 'security' ? 'var(--color-primary-dark)' : 'var(--color-text)' }}>Security</div>
+          <div className="input-group">
+            <label className="input-label">
+              Username
+            </label>
+
+            <input
+              className="input-field"
+              value={profile.username}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  username: e.target.value,
+                })
+              }
+            />
           </div>
+
+          <div className="input-group">
+            <label className="input-label">
+              Email
+            </label>
+
+            <input
+              className="input-field"
+              value={profile.email}
+              disabled
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-primary"
+          >
+            Save Profile
+          </button>
+
+        </form>
+
+        {/* Password */}
+
+        <form
+          className="card"
+          onSubmit={handlePasswordSave}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+          }}
+        >
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: ".75rem",
+            }}
+          >
+            <Shield size={24} />
+            <h2>Security</h2>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">
+              Current Password
+            </label>
+
+            <input
+              type="password"
+              className="input-field"
+              value={passwords.current}
+              onChange={(e) =>
+                setPasswords({
+                  ...passwords,
+                  current: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">
+              New Password
+            </label>
+
+            <input
+              type="password"
+              className="input-field"
+              value={passwords.newPassword}
+              onChange={(e) =>
+                setPasswords({
+                  ...passwords,
+                  newPassword: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">
+              Confirm Password
+            </label>
+
+            <input
+              type="password"
+              className="input-field"
+              value={passwords.confirmPassword}
+              onChange={(e) =>
+                setPasswords({
+                  ...passwords,
+                  confirmPassword: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-primary"
+          >
+            Change Password
+          </button>
+
+        </form>
+                {/* Logout */}
+
+        <div
+          className="card"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: ".75rem",
+            }}
+          >
+            <LogOut size={24} />
+            <h2>Account</h2>
+          </div>
+
+          <p style={{ color: "var(--color-text-light)" }}>
+            Sign out from your InventAI account.
+          </p>
+
+          <button
+            className="btn btn-danger"
+            onClick={onLogout}
+          >
+            Logout
+          </button>
         </div>
 
-        {/* Content Area */}
-        <div>
-          {activeTab === 'profile' && (
-            <form className="card" onSubmit={handleProfileSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'slideUp 0.3s ease-out' }}>
-              <h3 style={{ fontSize: '1.25rem', color: 'var(--color-primary-dark)', marginBottom: '0.5rem' }}>Profile Information</h3>
-              <div className="grid grid-cols-2" style={{ gap: '1.5rem' }}>
-                <div className="input-group">
-                  <label className="input-label">Full Name</label>
-                  <input type="text" className="input-field" value={profileForm.name} onChange={e => setProfileForm({...profileForm, name: e.target.value})} required />
-                </div>
-                <div className="input-group">
-                  <label className="input-label">Email Address</label>
-                  <input type="email" className="input-field" value={profileForm.email} onChange={e => setProfileForm({...profileForm, email: e.target.value})} required />
-                </div>
-                <div className="input-group">
-                  <label className="input-label">Phone Number</label>
-                  <input type="tel" className="input-field" value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} />
-                </div>
-                <div className="input-group">
-                  <label className="input-label">Role</label>
-                  <input type="text" className="input-field" value={profileForm.role} disabled style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-light)' }} />
-                </div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--color-border)' }}>
-                <button type="submit" className="btn btn-primary">Save Profile</button>
-              </div>
-            </form>
-          )}
+        {/* About */}
 
-          {activeTab === 'store' && (
-            <form className="card" onSubmit={handleStoreSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'slideUp 0.3s ease-out' }}>
-              <h3 style={{ fontSize: '1.25rem', color: 'var(--color-primary-dark)', marginBottom: '0.5rem' }}>Business & Store Details</h3>
-              <div className="grid grid-cols-2" style={{ gap: '1.5rem' }}>
-                <div className="input-group">
-                  <label className="input-label">Business Name</label>
-                  <input type="text" className="input-field" value={storeForm.name} onChange={e => setStoreForm({...storeForm, name: e.target.value})} required />
-                </div>
-                <div className="input-group">
-                  <label className="input-label">Default Currency</label>
-                  <select className="input-field" value={storeForm.currency} onChange={e => setStoreForm({...storeForm, currency: e.target.value})}>
-                    <option value="INR">Indian Rupee (₹)</option>
-                    <option value="USD">US Dollar ($)</option>
-                    <option value="EUR">Euro (€)</option>
-                    <option value="GBP">British Pound (£)</option>
-                  </select>
-                </div>
-                <div className="input-group" style={{ gridColumn: 'span 2' }}>
-                  <label className="input-label">Registered Address (Optional)</label>
-                  <input type="text" className="input-field" placeholder="123 Corporate Park, Mumbai..." value={storeForm.address} onChange={e => setStoreForm({...storeForm, address: e.target.value})} />
-                </div>
-                <div className="input-group">
-                  <label className="input-label">GSTIN / Tax ID (Optional)</label>
-                  <input type="text" className="input-field" placeholder="27XXXXX1234X1Z5" value={storeForm.gst} onChange={e => setStoreForm({...storeForm, gst: e.target.value})} />
-                </div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--color-border)' }}>
-                <button type="submit" className="btn btn-primary">Save Details</button>
-              </div>
-            </form>
-          )}
+        <div
+          className="card"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <h2>About InventAI</h2>
 
-          {activeTab === 'security' && (
-            <form className="card" onSubmit={handleSecuritySave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'slideUp 0.3s ease-out' }}>
-              <h3 style={{ fontSize: '1.25rem', color: 'var(--color-primary-dark)', marginBottom: '0.5rem' }}>Security Settings</h3>
-              <div className="grid" style={{ gap: '1.5rem', maxWidth: '400px' }}>
-                <div className="input-group">
-                  <label className="input-label">Current Password</label>
-                  <input type="password" placeholder="••••••••" className="input-field" value={passwords.current} onChange={e => setPasswords({...passwords, current: e.target.value})} required />
-                </div>
-                <div className="input-group">
-                  <label className="input-label">New Password</label>
-                  <input type="password" placeholder="••••••••" className="input-field" value={passwords.newPass} onChange={e => setPasswords({...passwords, newPass: e.target.value})} required />
-                </div>
-                <div className="input-group">
-                  <label className="input-label">Confirm New Password</label>
-                  <input type="password" placeholder="••••••••" className="input-field" value={passwords.confirm} onChange={e => setPasswords({...passwords, confirm: e.target.value})} required />
-                </div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--color-border)' }}>
-                <button type="submit" className="btn btn-primary">Change Password</button>
-              </div>
-            </form>
-          )}
+          <p>
+            <strong>Version:</strong> 1.0.0
+          </p>
+
+          <p>
+            <strong>Frontend:</strong> React + TypeScript + Vite
+          </p>
+
+          <p>
+            <strong>Backend:</strong> FastAPI
+          </p>
+
+          <p>
+            <strong>Database:</strong> PostgreSQL
+          </p>
+
+          <p>
+            <strong>Status:</strong>{" "}
+            <span
+              style={{
+                color: "#22c55e",
+                fontWeight: 600,
+              }}
+            >
+              Connected
+            </span>
+          </p>
         </div>
+
       </div>
 
       {toast && (
-        <div className="toast-container">
-          <CheckCircle size={20} />
+        <div
+          className="toast-container"
+          style={{
+            position: "fixed",
+            right: "24px",
+            bottom: "24px",
+            background: "#16a34a",
+            color: "#fff",
+            padding: "12px 18px",
+            borderRadius: "10px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            boxShadow: "0 8px 24px rgba(0,0,0,.15)",
+            zIndex: 9999,
+          }}
+        >
+          <CheckCircle size={18} />
           <span>{toast}</span>
         </div>
       )}

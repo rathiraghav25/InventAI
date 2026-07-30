@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AppProvider } from './store/MockAppStore';
 import { AppLayout } from './components/layout/AppLayout';
 import { Auth } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
@@ -11,9 +10,8 @@ import { Customers } from './pages/Customers';
 import { Analytics } from './pages/Analytics';
 import { AIAssistant } from './pages/AIAssistant';
 import { Notifications } from './pages/Notifications';
-import { Settings } from './pages/Settings';
-import api from "./api/api";
 import { getCurrentUser } from "./api/auth";
+import { Settings } from './pages/Settings';
 
 const ProtectedRoute = ({ children, isAuthenticated }: { children: React.ReactNode, isAuthenticated: boolean }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -75,7 +73,6 @@ function App() {
   }, []);
 
   return (
-    <AppProvider adminId={adminId}>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Auth onLogin={login} />} />
@@ -88,11 +85,10 @@ function App() {
             <Route path="notifications" element={<Notifications />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="ai-assistant" element={<AIAssistant />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="settings" element={<Settings onLogout={logout} />} />
           </Route>
         </Routes>
       </BrowserRouter>
-    </AppProvider>
   );
 }
 

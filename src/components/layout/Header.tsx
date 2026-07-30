@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, UserCircle, Search, FileText, Package, Users, Menu, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../store/MockAppStore';
 import './Header.css';
 
 interface HeaderProps {
@@ -22,20 +21,11 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
 }) => {
   const navigate = useNavigate();
-  const { notifications, products, customers, invoices } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  const unreadCount = notifications.filter(n => n.status === 'unread').length;
-
   // Search logic
-  const filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.sku.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 3);
-  const filteredCustomers = customers.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 3);
-  const filteredInvoices = invoices.filter(i => i.id.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 3);
-
-  const hasResults = filteredProducts.length > 0 || filteredCustomers.length > 0 || filteredInvoices.length > 0;
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -69,54 +59,20 @@ export const Header: React.FC<HeaderProps> = ({
           />
         </div>
         
-        {isSearchOpen && searchQuery.trim() !== '' && (
-          <div className="search-dropdown card">
-            {!hasResults ? (
-              <div className="search-no-results">No results found for "{searchQuery}"</div>
-            ) : (
-              <>
-                {filteredProducts.length > 0 && (
-                  <div className="search-section">
-                    <h4><Package size={14} /> Products</h4>
-                    {filteredProducts.map(p => (
-                      <div key={p.id} className="search-item" onClick={() => { setIsSearchOpen(false); navigate('/inventory'); }}>
-                        <span>{p.name}</span>
-                        <small>{p.sku}</small>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {filteredCustomers.length > 0 && (
-                  <div className="search-section">
-                    <h4><Users size={14} /> Customers</h4>
-                    {filteredCustomers.map(c => (
-                      <div key={c.id} className="search-item" onClick={() => { setIsSearchOpen(false); navigate('/customers'); }}>
-                        <span>{c.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {filteredInvoices.length > 0 && (
-                  <div className="search-section">
-                    <h4><FileText size={14} /> Invoices</h4>
-                    {filteredInvoices.map(i => (
-                      <div key={i.id} className="search-item" onClick={() => { setIsSearchOpen(false); navigate('/invoices'); }}>
-                        <span>Invoice {i.id}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
+        {isSearchOpen && searchQuery.trim() !== "" && (
+  <div className="search-dropdown card">
+    <div className="search-no-results">
+      Global search will be available in a future update.
+    </div>
+  </div>
+)}
       </div></div>
       
       <div className="header-actions">
         <div className="notification-bell" onClick={() => navigate('/notifications')}>
           <Bell size={22} className="bell-icon" />
-          {unreadCount > 0 && (
-            <span className="badge-count">{unreadCount}</span>
+          {0 > 0 && (
+            <span className="badge-count">{0}</span>
           )}
         </div>
 
@@ -129,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
       >
         <div
           className="user-profile"
-          onClick={() => navigate("/settings")}
+          onClick={() => navigate("/dashboard")}
         >
           <UserCircle size={28} className="profile-icon" />
           <span className="user-name">

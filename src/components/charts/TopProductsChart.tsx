@@ -20,7 +20,7 @@ interface TopProductsChartProps {
 
 const TopProductsChart: React.FC<TopProductsChartProps> = ({ data }) => {
   return (
-    <div className="card">
+    <div className="analytics-card">
       <h3 style={{ marginBottom: "1rem" }}>
         Top Selling Products
       </h3>
