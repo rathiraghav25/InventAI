@@ -19,12 +19,12 @@ const ProtectedRoute = ({ children, isAuthenticated }: { children: React.ReactNo
 };
 
 function App() {
-  // Simple mock authentication state with persistence
+  //Authentication state with persistence
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return !!localStorage.getItem("token");
   });
   
-  const [adminId, setAdminId] = useState<string>(() => {
+  const [, setAdminId] = useState<string>(() => {
     return localStorage.getItem('inventai_admin_id') || 'admin@inventai.com';
   });
 
@@ -57,7 +57,6 @@ function App() {
           setAdminId(user.id.toString());
           setIsAuthenticated(true);
           setCurrentUser(user);
-          console.log(user);
         } catch (err) {
             localStorage.removeItem("token");
             localStorage.removeItem("inventai_admin_id");

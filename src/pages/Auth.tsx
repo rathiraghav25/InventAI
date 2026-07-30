@@ -30,9 +30,6 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
-    // Simulating Real Database logic using LocalStorage Users Registry
-    const usersDB = JSON.parse(localStorage.getItem('inventai_users') || '{}');
 
     if (isLogin) {
       try {

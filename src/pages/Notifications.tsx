@@ -7,7 +7,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-import api from "../api/api";
 
 interface Notification {
   id: number;

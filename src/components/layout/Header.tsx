@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bell, UserCircle, Search, FileText, Package, Users, Menu, LogOut } from 'lucide-react';
+import { Bell, UserCircle, Search, Menu, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 

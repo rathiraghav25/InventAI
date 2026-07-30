@@ -31,7 +31,7 @@ const OrdersPage: React.FC = () => {
 
     const [orders, setOrders] = useState<Order[]>([]);
     const [customers, setCustomers] = useState<Customer[]>([]);
-    const [products, setProducts] = useState<Product[]>([]);
+    const [, setProducts] = useState<Product[]>([]);
 
     const [loading, setLoading] = useState(true);
 

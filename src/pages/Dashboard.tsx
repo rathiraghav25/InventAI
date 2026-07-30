@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MetricCard } from '../components/MetricCard';
-import { IndianRupee, AlertTriangle, CheckCircle, TrendingUp, Plus, FileText, BarChart3 } from 'lucide-react';
+import { IndianRupee, CheckCircle, TrendingUp, Plus, FileText} from 'lucide-react';
 import './Dashboard.css';
 import { useEffect, useState } from "react";
 import {
@@ -17,9 +17,9 @@ import LowStockTable from "../components/charts/LowStockTable";
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState<any[]>([]);
+  const [, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [stats, setStats] = useState<DashboardStats>({
