@@ -1,11 +1,78 @@
-import React from 'react';
-import { Download, CheckCircle, Trash2 } from 'lucide-react';
-import { useAppStore } from '../store/MockAppStore';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import React, { useEffect, useState } from "react";
+import { Download, CheckCircle, Trash2 } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+import {
+    getInvoices,
+    updateInvoice,
+    deleteInvoice,
+    type Invoice,
+} from "../api/invoice";
+
+import { getOrders } from "../api/order";
+import { getCustomers } from "../api/customer";
+import { getProducts } from "../api/product";
 
 export const Invoices: React.FC = () => {
-  const { invoices, orders, customers, products, markInvoicePaid, deleteInvoice } = useAppStore();
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadData = async () => {
+      try {
+          setLoading(true);
+
+          const [
+              invoiceData,
+              orderData,
+              customerData,
+              productData,
+          ] = await Promise.all([
+              getInvoices(),
+              getOrders(),
+              getCustomers(),
+              getProducts(),
+          ]);
+
+          setInvoices(invoiceData);
+          setOrders(orderData);
+          setCustomers(customerData);
+          setProducts(productData);
+      } catch (err) {
+          console.error(err);
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  useEffect(() => {
+      loadData();
+  }, []);
+
+  const markInvoicePaid = async (id: string) => {
+      try {
+          await updateInvoice(id, {
+              payment_status: "Paid",
+          });
+
+          loadData();
+      } catch (err) {
+          console.error(err);
+      }
+  };
+
+  const removeInvoice = async (id: string) => {
+      try {
+          await deleteInvoice(id);
+
+          loadData();
+      } catch (err) {
+          console.error(err);
+      }
+  };
 
   const formatINR = (amt: number) => `₹${amt.toLocaleString('en-IN')}`;
 
@@ -50,15 +117,23 @@ export const Invoices: React.FC = () => {
     doc.text(customer?.phone || '', 14, 71);
 
     // Items Table
-    const tableData = order.items.map(item => {
-      const prod = products.find(p => p.id === item.product_id);
-      return [
-        prod?.name || 'Item',
-        item.quantity.toString(),
-        `Rs. ${item.price.toLocaleString('en-IN')}`,
-        `Rs. ${item.subtotal.toLocaleString('en-IN')}`
-      ];
-    });
+    const product = products.find(
+        (p) => p.id === order.product_id
+    );
+
+    const unitPrice =
+        order.quantity > 0
+            ? invoice.total_amount / order.quantity
+            : 0;
+
+    const tableData = [
+        [
+            product?.name || "Item",
+            order.quantity.toString(),
+            `₹${unitPrice.toLocaleString("en-IN")}`,
+            `₹${invoice.total_amount.toLocaleString("en-IN")}`,
+        ],
+    ];
 
     autoTable(doc, {
       startY: 85,
@@ -75,10 +150,26 @@ export const Invoices: React.FC = () => {
     doc.setTextColor(15, 28, 63);
     doc.text('Total Amount:', 140, finalY);
     doc.setFontSize(14);
-    doc.text(`Rs. ${invoice.total_amount.toLocaleString('en-IN')}`, 170, finalY);
+    doc.text(`₹${invoice.total_amount.toLocaleString('en-IN')}`, 170, finalY);
 
     doc.save(`${invoice.id}.pdf`);
   };
+
+  if (loading) {
+      return (
+          <div
+              style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "70vh",
+                  fontSize: "1.2rem",
+              }}
+          >
+              Loading invoices...
+          </div>
+      );
+  }
 
   return (
     <div className="page-container" style={{ padding: 0 }}>
@@ -131,7 +222,7 @@ export const Invoices: React.FC = () => {
                             <CheckCircle size={14} /> Paid
                           </button>
                         )}
-                        <button className="btn btn-ghost" title="Delete Invoice" onClick={() => { if(window.confirm('Delete this invoice?')) deleteInvoice(invoice.id); }} style={{ padding: '0.25rem', color: 'var(--color-danger)' }}><Trash2 size={16} /></button>
+                        <button className="btn btn-ghost" title="Delete Invoice" onClick={() => {if (window.confirm("Delete this invoice?")) {removeInvoice(invoice.id);} }} style={{ padding: '0.25rem', color: 'var(--color-danger)' }}><Trash2 size={16} /></button>
                       </div>
                     </td>
                   </tr>
@@ -139,7 +230,8 @@ export const Invoices: React.FC = () => {
               })}
               {invoices.length === 0 && (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '3rem' }}>No invoices found. Generate an invoice from the Orders page.</td>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '3rem' }}> No invoices available yet.
+                                                                                    Create an order and an invoice will be generated automatically.</td>
                 </tr>
               )}
             </tbody>

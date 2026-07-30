@@ -5,7 +5,9 @@ from app.api.dashboard import router as dashboard_router
 import app.models.base
 import app.models.product
 import app.models.order
+import app.models.invoice
 from app.api.customer import router as customer_router
+from app.api.invoice import router as invoice_router
 
 from app.db.database import create_tables
 
@@ -31,6 +33,7 @@ app.include_router(product_router)
 app.include_router(dashboard_router)
 app.include_router(customer_router)
 app.include_router(order_router)
+app.include_router(invoice_router)
 
 
 @app.get("/")

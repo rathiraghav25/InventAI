@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { createOrder } from "../../api/order";
 import { getCustomers } from "../../api/customer";
 import { getProducts } from "../../api/product";
+import { createInvoice } from "../../api/invoice";
 
 interface Props {
     isOpen: boolean;
@@ -114,6 +115,7 @@ const CreateOrderModal: React.FC<Props> = ({
                 quantity,
 
             });
+
 
             resetForm();
 

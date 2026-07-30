@@ -1,38 +1,60 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppStore } from '../store/MockAppStore';
 import { MetricCard } from '../components/MetricCard';
 import { IndianRupee, AlertTriangle, CheckCircle, TrendingUp, Sparkles, Plus, FileText, BarChart3, Bell } from 'lucide-react';
 import './Dashboard.css';
 import { useEffect, useState } from "react";
 import { getDashboardStats } from "../api/dashboard";
+import { getProducts } from "../api/product";
+import { getOrders } from "../api/order";
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { products, orders, notifications } = useAppStore();
+  const [products, setProducts] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   const lowStockCount = products.filter(p => p.stock_quantity <= p.reorder_threshold && p.stock_quantity > 0).length;
   const outOfStockCount = products.filter(p => p.stock_quantity === 0).length;
   const totalStockValue = products.reduce((acc, p) => acc + (p.stock_quantity * p.purchase_price), 0);
   
   const [stats, setStats] = useState({
-    total_products: 0,
-    low_stock: 0,
-    inventory_value: 0,
-    total_categories: 0,
+      total_products: 0,
+      total_customers: 0,
+      total_orders: 0,
+      low_stock: 0,
+      inventory_value: 0,
+      total_categories: 0,
+      total_revenue: 0,
+      completed_orders: 0,
+      pending_orders: 0,
   });
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await getDashboardStats();
-        setStats(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+      const fetchDashboardData = async () => {
+          try {
+              const [
+                  statsRes,
+                  productsData,
+                  ordersData,
+              ] = await Promise.all([
+                  getDashboardStats(),
+                  getProducts(),
+                  getOrders(),
+              ]);
 
-    fetchStats();
+              setStats(statsRes);
+              setProducts(productsData);
+              setOrders(ordersData);
+
+            // Temporary until Notifications backend exists
+              setNotifications([]);
+          } catch (err) {
+              console.error(err);
+          }
+      };
+
+      fetchDashboardData();
   }, []);
 
   const pendingOrders = orders.filter(o => o.status === 'Pending').length;

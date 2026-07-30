@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from app.models.order import Order
 from app.models.product import Product
 from app.models.customer import Customer
-
+from app.models.invoice import Invoice
+from app.models.invoice import Invoice
 from app.schemas.order import OrderCreate, OrderUpdate
 
 
@@ -65,6 +66,17 @@ def create_order(db: Session, order: OrderCreate):
     try:
         db.commit()
         db.refresh(db_order)
+
+        db_invoice = Invoice(
+            order_id=db_order.id,
+            customer_id=db_order.customer_id,
+            total_amount=db_order.total_amount,
+            payment_status="Unpaid",
+        )
+
+        db.add(db_invoice)
+        db.commit()
+
     except Exception:
         db.rollback()
         raise
@@ -105,6 +117,15 @@ def delete_order(db: Session, order_id: str):
 
     if product:
         product.stock_quantity += db_order.quantity
+
+    invoice = (
+        db.query(Invoice)
+        .filter(Invoice.order_id == db_order.id)
+        .first()
+    )
+
+    if invoice:
+        db.delete(invoice)
 
     try:
         db.delete(db_order)

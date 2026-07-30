@@ -1,9 +1,18 @@
+import api from "./api";
 
-import axios from "axios";
+export interface DashboardStats {
+    total_products: number;
+    total_customers: number;
+    total_orders: number;
+    low_stock: number;
+    inventory_value: number;
+    total_categories: number;
+    total_revenue: number;
+    completed_orders: number;
+    pending_orders: number;
+}
 
-const API = axios.create({
-  baseURL: "http://127.0.0.1:8000",
-});
-
-export const getDashboardStats = () =>
-  API.get("/dashboard/stats");
+export const getDashboardStats = async (): Promise<DashboardStats> => {
+    const response = await api.get("/dashboard/stats");
+    return response.data;
+};
