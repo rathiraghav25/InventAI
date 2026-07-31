@@ -90,11 +90,20 @@
 }
 
 .chat-bubble {
+  position:relative;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
   font-size: 0.95rem;
   line-height: 1.5;
   box-shadow: var(--shadow-sm);
+}
+
+.chat-bubble:hover .copy-btn{
+    opacity:1;
+}
+
+.copy-btn:hover{
+    background:rgba(255,255,255,.12);
 }
 
 .chat-bubble.ai {
@@ -209,4 +218,52 @@
   0% { opacity: 0.2; transform: scale(0.8); }
   20% { opacity: 1; transform: scale(1.2); }
   100% { opacity: 0.2; transform: scale(0.8); }
+}
+
+.copy-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+
+    width:30px;
+    height:30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:none;
+    border-radius:8px;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    opacity:0;
+
+    transition:all .25s ease;
+}
+
+.message-time{
+    margin-top:8px;
+    font-size:11px;
+    opacity:.6;
+}
+
+.follow-up-container{
+    margin:20px 0;
+    padding:12px;
+    border-top:1px solid rgba(255,255,255,0.08);
+}
+
+.follow-up-container h4{
+    margin-bottom:10px;
+    font-size:14px;
+    color:var(--color-text-light);
+}
+
+.follow-up-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
 }

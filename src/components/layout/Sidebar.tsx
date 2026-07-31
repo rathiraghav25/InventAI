@@ -7,6 +7,7 @@ import {
   FileText,
   BarChart3,
   Boxes,
+  Bot,
 } from "lucide-react";
 import "./Sidebar.css";
 
@@ -41,6 +42,11 @@ const menuItems = [
     path: "/analytics",
     icon: <BarChart3 size={20} />,
   },
+  {
+  name: "AI Assistant",
+  path: "/ai-assistant",
+  icon: <Bot size={20} />,
+},
 ];
 
 export default function Sidebar() {

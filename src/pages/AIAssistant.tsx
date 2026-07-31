@@ -1,12 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Bot, Send, Sparkles, User } from "lucide-react";
+import { Bot, Send, Sparkles, User, Copy, Check,} from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import { sendMessage } from "../api/ai";
-import "./AIAssistant.css";
+import type { ChatMessage } from "../api/ai";
 
 interface Message {
   id: string;
   sender: "ai" | "user";
   text: string;
+  time: string;
 }
 
 export const AIAssistant: React.FC = () => {
@@ -15,11 +19,40 @@ export const AIAssistant: React.FC = () => {
       id: "1",
       sender: "ai",
       text: "Hello! I am InventAI Assistant. Ask me anything about your inventory, customers, orders or business analytics.",
+      time: new Date().toLocaleTimeString(),
     },
   ]);
 
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [followUpSuggestions, setFollowUpSuggestions] = useState<string[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+
+  const clearChat = () => {
+  setMessages([
+    {
+      id: "1",
+      sender: "ai",
+      text: "Hello! I am InventAI Assistant. Ask me anything about your inventory, customers, orders or business analytics.",
+      time: new Date().toLocaleTimeString(),
+    },
+  ]);
+};
+
+const handleCopy = async (id: string, text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+
+    setCopiedId(id);
+
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 1500);
+  } catch (err) {
+    console.error("Copy failed:", err);
+  }
+};
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -43,20 +76,31 @@ export const AIAssistant: React.FC = () => {
 
     if (!text) return;
 
+    if (isTyping) return;
+
     const userMessage: Message = {
-      id: Date.now().toString(),
-      sender: "user",
-      text,
-    };
+    id: Date.now().toString(),
+    sender: "user",
+    text,
+    time: new Date().toLocaleTimeString(),
+};
 
     setMessages((prev) => [...prev, userMessage]);
 
     setInput("");
 
+    setFollowUpSuggestions([]);
+
     setIsTyping(true);
 
     try {
-      const response = await sendMessage(text);
+      const history: ChatMessage[] = messages
+  .slice(-8)
+  .map((msg) => ({
+    role: msg.sender === "user" ? "user" : "assistant",
+    content: msg.text,
+  }));
+      const response = await sendMessage(text, history);
 
       setMessages((prev) => [
         ...prev,
@@ -64,15 +108,24 @@ export const AIAssistant: React.FC = () => {
           id: Date.now().toString(),
           sender: "ai",
           text: response.response,
+          time: new Date().toLocaleTimeString(),
         },
       ]);
+      setFollowUpSuggestions([
+  "📊 Business Summary",
+  "📦 Inventory Health",
+  "💰 Revenue Analysis",
+  "👥 Customer Insights",
+]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
           sender: "ai",
-          text: "Unable to reach the AI service.",
+          text:
+          "⚠️ Unable to contact the AI service. Please verify your internet connection or Gemini API configuration.",
+          time: new Date().toLocaleTimeString(),
         },
       ]);
     } finally {
@@ -81,11 +134,13 @@ export const AIAssistant: React.FC = () => {
   };
 
   const suggestedPrompts = [
-    "Which products need restocking?",
-    "Which invoices are still unpaid?",
-    "What are my top-selling products?",
-    "Give me a business summary for today.",
-  ];
+    "📊 Give me a complete business summary",
+    "📦 Which products need restocking?",
+    "💰 Analyze my revenue",
+    "📈 Give business improvement suggestions",
+    "👥 Analyze my customers",
+    "🛒 Which products sell the best?"
+];
 
     return (
     <div className="page-container ai-page">
@@ -102,6 +157,13 @@ export const AIAssistant: React.FC = () => {
           >
             InventAI Assistant
           </h1>
+
+          <button
+  className="btn btn-outline"
+  onClick={clearChat}
+>
+  🗑 Clear Chat
+</button>
 
           <p
             style={{
@@ -127,6 +189,9 @@ export const AIAssistant: React.FC = () => {
                 key={msg.id}
                 className={`chat-bubble-container ${msg.sender}`}
               >
+                <div className="message-time">
+    {msg.time}
+</div>
 
                 <div className="chat-avatar">
 
@@ -138,11 +203,32 @@ export const AIAssistant: React.FC = () => {
 
                 </div>
 
-                <div
-                  className={`chat-bubble ${msg.sender}`}
-                >
-                  {msg.text}
-                </div>
+                <div className={`chat-bubble ${msg.sender}`}>
+
+  {msg.sender === "ai" ? (
+    <>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {msg.text}
+      </ReactMarkdown>
+
+      <button
+  className="copy-btn"
+  title={copiedId === msg.id ? "Copied!" : "Copy response"}
+  onClick={() => handleCopy(msg.id, msg.text)}
+>
+  {copiedId === msg.id ? (
+    <Check size={16} />
+  ) : (
+    <Copy size={16} />
+  )}
+</button>
+
+    </>
+  ) : (
+    msg.text
+  )}
+
+</div>
 
               </div>
 
@@ -170,7 +256,30 @@ export const AIAssistant: React.FC = () => {
 
             )}
 
-            <div ref={messagesEndRef} />
+            {followUpSuggestions.length > 0 && (
+  <div className="follow-up-container">
+
+    <h4>Suggested Follow-up</h4>
+
+    <div className="follow-up-buttons">
+
+      {followUpSuggestions.map((suggestion, index) => (
+        <button
+          key={index}
+          className="btn btn-outline suggestion-btn"
+          onClick={() => handleSend(undefined, suggestion)}
+          disabled={isTyping}
+        >
+          {suggestion}
+        </button>
+      ))}
+
+    </div>
+
+  </div>
+)}
+
+<div ref={messagesEndRef} />
 
           </div>
 
@@ -225,6 +334,7 @@ export const AIAssistant: React.FC = () => {
                   className="btn btn-outline suggestion-btn"
                   onClick={() =>
                     handleSend(undefined, prompt)
+                    
                   }
                   disabled={isTyping}
                 >

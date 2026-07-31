@@ -23,11 +23,13 @@ def chat(
     db: Session = Depends(get_db),
 ):
 
-    AIService.build_context(db)
+    context = AIService.build_context(db)
 
-    answer = AIService.get_demo_response(
-        request.message
-    )
+    answer = AIService.ask_gemini(
+    message=request.message,
+    context=context,
+    history=request.history,
+)
 
     return AIChatResponse(
         response=answer

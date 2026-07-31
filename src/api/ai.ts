@@ -9,6 +9,7 @@ const api = axios.create({
 
 export interface AIChatRequest {
   message: string;
+  history: ChatMessage[];
 }
 
 export interface AIChatResponse {
@@ -16,12 +17,15 @@ export interface AIChatResponse {
 }
 
 export const sendMessage = async (
-  message: string
+  message: string,
+  history: ChatMessage[]
 ): Promise<AIChatResponse> => {
+
   const { data } = await api.post<AIChatResponse>(
     "/ai/chat",
     {
       message,
+      history,
     }
   );
 
@@ -29,3 +33,8 @@ export const sendMessage = async (
 };
 
 export default api;
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
