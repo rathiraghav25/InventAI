@@ -17,9 +17,16 @@ from app.api.order import router as order_router
 
 app = FastAPI(title="InventAI API")
 
+@app.get("/healthz")
+def health():
+    return {"status": "ok"}
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://invent-ai-pi.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
