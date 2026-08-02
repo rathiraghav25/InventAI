@@ -22,6 +22,31 @@ InventAI is a modern inventory and billing platform built for small and medium b
 
 The project follows a clean full-stack architecture using React + TypeScript on the frontend and FastAPI + PostgreSQL on the backend.
 
+## 📊 Project Statistics
+
+- 🚀 30+ REST API Endpoints
+- 📦 7 Business Management Modules
+- 🔐 JWT Authentication & Authorization
+- 🤖 AI-powered Business Assistant (Google Gemini)
+- 🗄️ PostgreSQL Database (Neon)
+- ☁️ Fully Cloud Deployed (Vercel + Render)
+- ⚛️ React + TypeScript Frontend
+- ⚡ FastAPI Backend
+
+---
+
+## Table of Contents
+
+- Features
+- Screenshots
+- Tech Stack
+- Architecture
+- Installation
+- Environment Variables
+- API Documentation
+- Future Improvements
+- Author
+
 ---
 
 # ✨ Features
@@ -174,12 +199,13 @@ The project follows a clean full-stack architecture using React + TypeScript on 
 
 # 🌐 Deployment
 
-| Service | Platform |
-|----------|----------|
-| Frontend | Vercel |
-| Backend | Render |
-| Database | Neon PostgreSQL |
-| AI Model | Google Gemini |
+| Component | Service | URL |
+|------------|---------|-----|
+| Frontend | Vercel | https://invent-ai-pi.vercel.app |
+| Backend API | Render | https://inventai-m4e4.onrender.com |
+| API Docs | Swagger | https://inventai-m4e4.onrender.com/docs |
+| Database | Neon PostgreSQL | Managed Cloud Database |
+| AI | Google Gemini | Gemini API |
 
 ---
 
@@ -214,24 +240,35 @@ InventAI
 
 # 🏛️ Architecture
 
-Frontend (React + TypeScript)
-
-↓
-
-REST API (FastAPI)
-
-↓
-
-SQLAlchemy ORM
-
-↓
-
-PostgreSQL (Neon)
-
-↓
-
-Google Gemini AI
-
+```text
+                    ┌─────────────────────────────┐
+                    │       React + Vite          │
+                    │      TypeScript Frontend    │
+                    └─────────────┬───────────────┘
+                                  │
+                           Axios HTTP Requests
+                                  │
+                                  ▼
+                    ┌─────────────────────────────┐
+                    │      FastAPI Backend        │
+                    │ Authentication • Business   │
+                    │ Logic • REST APIs           │
+                    └─────────────┬───────────────┘
+                                  │
+             ┌────────────────────┴────────────────────┐
+             │                                         │
+             ▼                                         ▼
+ ┌─────────────────────┐                 ┌────────────────────────┐
+ │ SQLAlchemy ORM      │                 │ Google Gemini AI       │
+ │ Database Layer      │                 │ AI Business Assistant  │
+ └──────────┬──────────┘                 └────────────────────────┘
+            │
+            ▼
+ ┌─────────────────────┐
+ │ Neon PostgreSQL     │
+ │ Cloud Database      │
+ └─────────────────────┘
+```
 ---
 
 # 🚀 Installation
@@ -327,12 +364,23 @@ to explore all available REST endpoints using Swagger UI.
 
 ---
 
-# 🔮 Future Improvements
+# ⚠️ Known Limitations
 
-- Email Invoice Delivery
-- Multi-language Support
-- Inventory Forecasting
-- Mobile Responsive Optimization
+- Currently all authenticated users share the same inventory data.
+- Multi-user data isolation (owner-based records) is planned for a future release.
+- Customer form validation can be improved.
+
+---
+
+# 🚀 Roadmap (v1.1)
+
+- User-specific inventory (owner_id based)
+- Role-based authentication
+- Email invoice delivery
+- Inventory forecasting
+- Mobile responsiveness
+- Improved form validation
+- Advanced analytics
 
 ---
 
@@ -340,17 +388,11 @@ to explore all available REST endpoints using Swagger UI.
 
 **Raghav Rathi**
 
-B.Tech Electronics & Communication Engineering
+B.Tech – Electronics & Communication Engineering  
+Malaviya National Institute of Technology (MNIT), Jaipur
 
-Malaviya National Institute of Technology Jaipur
-
-GitHub
-
-https://github.com/rathiraghav25
-
-LinkedIn
-
-https://linkedin.com/in/raghavrathi752
+- GitHub: https://github.com/rathiraghav25
+- LinkedIn: https://linkedin.com/in/raghavrathi752
 
 ---
 
