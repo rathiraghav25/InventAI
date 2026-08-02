@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./api";
 
 export interface ProductRequest {
     name: string;
@@ -11,26 +11,22 @@ export interface ProductRequest {
     reorder_threshold: number;
 }
 
-const API = axios.create({
-    baseURL: "http://127.0.0.1:8000",
-});
-
 export const getProducts = async () => {
-    const response = await API.get("/products/");
+    const response = await api.get("/products/");
     return response.data;
 };
 
 export const getProduct = (id: string) =>
-    API.get(`/products/${id}`);
+    api.get(`/products/${id}`);
 
 export const createProduct = (data: any) =>
-    API.post("/products/", data);
+    api.post("/products/", data);
 
 export const updateProduct = (
     id: string,
     data: Partial<ProductRequest>
 ) =>
-    API.put(`/products/${id}`, data);
+    api.put(`/products/${id}`, data);
 
 export const deleteProduct = (id: string) =>
-    API.delete(`/products/${id}`);
+    api.delete(`/products/${id}`);

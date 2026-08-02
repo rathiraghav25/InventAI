@@ -1,22 +1,18 @@
-import axios from "axios";
-
-const API = axios.create({
-    baseURL: "http://127.0.0.1:8000",
-});
+import api from "./api";
 
 export const getCustomers = async () => {
-    const response = await API.get("/customers/");
+    const response = await api.get("/customers/");
     return response.data;
 };
 
 export const getCustomer = (id: string) =>
-    API.get(`/customers/${id}`);
+    api.get(`/customers/${id}`);
 
 export const createCustomer = (data: any) =>
-    API.post("/customers/", data);
+    api.post("/customers/", data);
 
 export const updateCustomer = (id: string, data: any) =>
-    API.put(`/customers/${id}`, data);
+    api.put(`/customers/${id}`, data);
 
 export const deleteCustomer = (id: string) =>
-    API.delete(`/customers/${id}`);
+    api.delete(`/customers/${id}`);
