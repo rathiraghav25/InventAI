@@ -1,8 +1,12 @@
 # 📦 InventAI
 
-# 🎥 Demo
+# 🎥 Live Demo
 
-> 🚧 Live demo will be added after deployment.
+### Frontend
+https://invent-ai-pi.vercel.app/
+
+### Backend API (Swagger)
+https://inventai-m4e4.onrender.com/docs
 
 > A modern full-stack Inventory & Billing Management System with AI-powered business insights.
 
@@ -21,6 +25,15 @@ The project follows a clean full-stack architecture using React + TypeScript on 
 ---
 
 # ✨ Features
+
+## 📌 Project Highlights
+
+- 30+ REST API endpoints
+- 7 business management modules
+- Secure JWT Authentication
+- AI-powered Business Assistant using Google Gemini
+- PostgreSQL database with SQLAlchemy ORM
+- Interactive analytics dashboard with Recharts
 
 ## 🔐 Authentication
 
@@ -159,6 +172,17 @@ The project follows a clean full-stack architecture using React + TypeScript on 
 
 ---
 
+# 🌐 Deployment
+
+| Service | Platform |
+|----------|----------|
+| Frontend | Vercel |
+| Backend | Render |
+| Database | Neon PostgreSQL |
+| AI Model | Google Gemini |
+
+---
+
 # 📁 Project Structure
 
 ```
@@ -216,19 +240,20 @@ Google Gemini AI
 
 ```bash
 git clone https://github.com/rathiraghav25/InventAI.git
-
 cd InventAI
 ```
 
----
-
-## Backend
+## Backend Setup
 
 ```bash
 cd backend
 
 python -m venv .venv
 
+# Windows
+.venv\Scripts\activate
+
+# Linux / macOS
 source .venv/bin/activate
 
 pip install -r requirements.txt
@@ -236,29 +261,26 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Backend runs on
+Backend:
 
 ```
 http://127.0.0.1:8000
 ```
 
-Swagger API
+Swagger:
 
 ```
 http://127.0.0.1:8000/docs
 ```
 
----
-
-## Frontend
+## Frontend Setup
 
 ```bash
 npm install
-
 npm run dev
 ```
 
-Frontend runs on
+Frontend:
 
 ```
 http://localhost:5173
@@ -266,16 +288,32 @@ http://localhost:5173
 
 ---
 
-# 📈 Project Highlights
+# 🔑 Environment Variables
 
-- AI-powered business assistant using Google Gemini
-- Secure JWT authentication & authorization
-- RESTful backend built with FastAPI
-- PostgreSQL database with SQLAlchemy ORM
-- Interactive analytics dashboard with Recharts
-- Automatic PDF invoice generation
-- Modular Clean Architecture
-- Responsive React + TypeScript frontend
+## Backend
+
+Create a `.env` file inside the `backend` folder.
+
+```env
+DATABASE_URL=your_database_url
+SECRET_KEY=your_secret_key
+GEMINI_API_KEY=your_gemini_api_key
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+```
+
+## Frontend
+
+For local development, create a `.env` file in the project root.
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+For production (Vercel), configure:
+
+```env
+VITE_API_URL=https://inventai-m4e4.onrender.com
+```
 
 ---
 
@@ -295,7 +333,6 @@ to explore all available REST endpoints using Swagger UI.
 - Multi-language Support
 - Inventory Forecasting
 - Mobile Responsive Optimization
-- Cloud Deployment
 
 ---
 
