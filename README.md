@@ -1,6 +1,6 @@
 # 📦 InventAI
 
-# 🎥 Live Demo
+# 🌐 Live Demo
 
 ### Frontend
 https://invent-ai-pi.vercel.app/
